@@ -1,9 +1,10 @@
 package com.techmafia.mcmods.mrfusion.tileentity;
 
+import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyStorage;
 import com.techmafia.mcmods.mrfusion.net.CommonPacketHandler;
 import com.techmafia.mcmods.mrfusion.net.messages.DeviceUpdateMessage;
-import net.minecraft.entity.Entity;
+import moze_intel.projecte.api.item.IItemEmc;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -14,10 +15,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
@@ -27,7 +25,7 @@ import java.util.Set;
 /**
  * Created by mengy007 on 1/31/2016.
  */
-public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyStorage, IInventory {
+public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyStorage, IEnergyConnection, IInventory {
     final int NUMBER_OF_SLOTS = 1;
     final String DISPLAY_NAME = "Mr. Fusion";
 
@@ -168,6 +166,12 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
 
             int energyToAdd = (rfPerItem * itemStack.stackSize);
 
+            // EMC support
+            if (itemStack.getItem() instanceof IItemEmc) {
+                energyToAdd = (int)((IItemEmc)itemStack.getItem()).getStoredEmc(itemStack);
+            }
+
+
             int energyAdded = this.receiveEnergy(energyToAdd, false);
 
             if (energyAdded > 0) {
@@ -178,6 +182,11 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
         } else {
             //System.out.println("Something is wrong.");
         }
+
+        /**
+         * Distribute power
+         */
+
 
         // Send update to players watching
         if (this.playersWatching.size() > 0) {
@@ -344,5 +353,10 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
 
     public int getEnergyStored() {
         return energy;
+    }
+
+    @Override
+    public boolean canConnectEnergy(EnumFacing from) {
+        return true;
     }
 }
