@@ -2,8 +2,9 @@ package com.techmafia.mcmods.mrfusion.block;
 
 import com.techmafia.mcmods.mrfusion.MrFusion;
 import com.techmafia.mcmods.mrfusion.creativetab.CreativeTabMrFusion;
-import com.techmafia.mcmods.mrfusion.handler.gui.GuiHandlerBlockMrFusion;
+import com.techmafia.mcmods.mrfusion.gui.handler.GuiHandlerBlockMrFusion;
 import com.techmafia.mcmods.mrfusion.tileentity.TileEntityMrFusion;
+import moze_intel.projecte.api.item.IItemEmc;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -60,6 +61,6 @@ public class BlockMrFusion extends BlockContainer implements ITileEntityProvider
     /* ITileEntityProvider */
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityMrFusion(100000000);
+        return new TileEntityMrFusion(1000000);
     }
 }

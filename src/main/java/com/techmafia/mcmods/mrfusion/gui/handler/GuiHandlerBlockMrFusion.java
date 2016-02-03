@@ -1,4 +1,4 @@
-package com.techmafia.mcmods.mrfusion.handler.gui;
+package com.techmafia.mcmods.mrfusion.gui.handler;
 
 import com.techmafia.mcmods.mrfusion.container.ContainerMrFusion;
 import com.techmafia.mcmods.mrfusion.gui.inventory.GuiInventoryMrFusion;

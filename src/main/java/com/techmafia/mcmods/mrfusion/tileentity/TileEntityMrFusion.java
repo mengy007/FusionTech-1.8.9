@@ -1,9 +1,10 @@
 package com.techmafia.mcmods.mrfusion.tileentity;
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyStorage;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyHandler;
 import com.techmafia.mcmods.mrfusion.net.CommonPacketHandler;
 import com.techmafia.mcmods.mrfusion.net.messages.DeviceUpdateMessage;
+import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.item.IItemEmc;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -25,12 +26,11 @@ import java.util.Set;
 /**
  * Created by mengy007 on 1/31/2016.
  */
-public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyStorage, IEnergyConnection, IInventory {
+public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyHandler, IInventory {
     final int NUMBER_OF_SLOTS = 1;
     final String DISPLAY_NAME = "Mr. Fusion";
 
-    protected int energy;
-    protected int capacity;
+    protected EnergyStorage energyStorage = new EnergyStorage(1000000);
 
     private int ticksSinceLastUpdate = 0;
     private int ticksBetweenUpdates = 3;
@@ -38,11 +38,11 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
     private Set<EntityPlayer> playersWatching;
 
     public TileEntityMrFusion() {
-        this(100000000);
+        playersWatching = new HashSet<EntityPlayer>();
     }
 
     public TileEntityMrFusion(int capacity) {
-        this.capacity = capacity;
+        this.energyStorage = new EnergyStorage(capacity);
         playersWatching = new HashSet<EntityPlayer>();
     }
 
@@ -97,7 +97,9 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
      * @param nbt
      */
     public void onSendUpdate(NBTTagCompound nbt) {
-        nbt.setInteger("Energy", this.energy);
+        NBTTagCompound energyTag = new NBTTagCompound();
+        this.energyStorage.writeToNBT(energyTag);
+        nbt.setTag("energyStorage", energyTag);
     }
 
     /**
@@ -105,7 +107,7 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
      * @param nbt
      */
     public void onReceiveUpdate(NBTTagCompound nbt) {
-        this.energy = nbt.getInteger("Energy");
+        this.energyStorage.readFromNBT(nbt.getCompoundTag("energyStorage"));
     }
 
     @Override
@@ -113,10 +115,8 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
         super.readFromNBT(nbt);
 
         /* IEnergyContainer */
-        this.energy = nbt.getInteger("Energy");
-
-        if (this.energy > this.capacity) {
-            this.energy = this.capacity;
+        if (nbt.hasKey("energyStorage")) {
+            this.energyStorage.readFromNBT(nbt.getCompoundTag("energyStorage"));
         }
 
         /* IInventory */
@@ -133,11 +133,9 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
         super.writeToNBT(nbt);
 
         /* IEnergyContainer */
-        if (this.energy < 0) {
-            this.energy = 0;
-        }
-
-        nbt.setInteger("Energy", this.energy);
+        NBTTagCompound energyTag = new NBTTagCompound();
+        this.energyStorage.writeToNBT(energyTag);
+        nbt.setTag("energyStorage", energyTag);
 
         /* IInventory */
         if (itemStack != null) {
@@ -161,32 +159,28 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
 
         ItemStack itemStack = getStackInSlot(0);
 
-        if (itemStack != null && itemStack.stackSize > 0) {
+        // Only run if there are items to burn and energy is not full
+        if (itemStack != null && itemStack.stackSize > 0 && this.getEnergyStored(null) < this.getMaxEnergyStored(null)) {
             int rfPerItem = 1;
 
-            int energyToAdd = (rfPerItem * itemStack.stackSize);
+            // munch munch much one stack at a time
+            for (int i=0; i<itemStack.stackSize; i++) {
+                // Break if energy is full or itemStack is depleted
+                if (this.getEnergyStored(null) == this.getMaxEnergyStored(null) || itemStack == null) {
+                    break;
+                }
 
-            // EMC support
-            if (itemStack.getItem() instanceof IItemEmc) {
-                energyToAdd = (int)((IItemEmc)itemStack.getItem()).getStoredEmc(itemStack);
+                // 1 item at a time
+                ItemStack removedItemStack = decrStackSize(0, 1);
+                if (removedItemStack != null && removedItemStack.stackSize == 1) {
+                    // EMC support
+                    if (ProjectEAPI.getEMCProxy().hasValue(removedItemStack)) {
+                        rfPerItem = ProjectEAPI.getEMCProxy().getValue(removedItemStack);
+                    }
+                    this.receiveEnergy(null, rfPerItem, false);
+                }
             }
-
-
-            int energyAdded = this.receiveEnergy(energyToAdd, false);
-
-            if (energyAdded > 0) {
-                int itemsEaten = energyAdded / rfPerItem;
-
-                decrStackSize(0, itemsEaten);
-            }
-        } else {
-            //System.out.println("Something is wrong.");
         }
-
-        /**
-         * Distribute power
-         */
-
 
         // Send update to players watching
         if (this.playersWatching.size() > 0) {
@@ -320,43 +314,30 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
         itemStack = null;
     }
 
-    /* IEnergyStorage */
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-
-        if (this.energy > capacity) {
-            this.energy = capacity;
-        }
+    /* IEnergyHandler */
+    @Override
+    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+        return energyStorage.receiveEnergy(maxReceive, simulate);
     }
 
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        int energyReceived = Math.min(capacity - energy, maxReceive);
-
-        if (!simulate) {
-            energy += energyReceived;
-        }
-        return energyReceived;
+    @Override
+    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+        return energyStorage.extractEnergy(maxExtract, simulate);
     }
 
-    public int extractEnergy(int maxExtract, boolean simulate) {
-        int energyExtracted = Math.min(energy, maxExtract);
-
-        if (!simulate) {
-            energy -= energyExtracted;
-        }
-        return energyExtracted;
+    @Override
+    public int getMaxEnergyStored(EnumFacing from) {
+        return energyStorage.getMaxEnergyStored();
     }
 
-    public int getMaxEnergyStored() {
-        return capacity;
-    }
-
-    public int getEnergyStored() {
-        return energy;
+    @Override
+    public int getEnergyStored(EnumFacing from) {
+        return energyStorage.getEnergyStored();
     }
 
     @Override
     public boolean canConnectEnergy(EnumFacing from) {
         return true;
     }
+
 }

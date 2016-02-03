@@ -1,4 +1,4 @@
-package com.techmafia.mcmods.mrfusion.handler.gui;
+package com.techmafia.mcmods.mrfusion.gui.handler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;

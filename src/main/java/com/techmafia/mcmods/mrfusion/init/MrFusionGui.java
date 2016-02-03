@@ -1,8 +1,8 @@
 package com.techmafia.mcmods.mrfusion.init;
 
 import com.techmafia.mcmods.mrfusion.MrFusion;
-import com.techmafia.mcmods.mrfusion.handler.gui.GuiHandlerBlockMrFusion;
-import com.techmafia.mcmods.mrfusion.handler.gui.GuiHandlerRegistry;
+import com.techmafia.mcmods.mrfusion.gui.handler.GuiHandlerBlockMrFusion;
+import com.techmafia.mcmods.mrfusion.gui.handler.GuiHandlerRegistry;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 /**
