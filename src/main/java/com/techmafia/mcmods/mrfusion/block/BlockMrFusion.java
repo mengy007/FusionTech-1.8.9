@@ -60,6 +60,6 @@ public class BlockMrFusion extends BlockContainer implements ITileEntityProvider
     /* ITileEntityProvider */
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityMrFusion();
+        return new TileEntityMrFusion(100000000);
     }
 }

@@ -1,7 +1,7 @@
 package moze_intel.projecte.api.tile;
 
 import net.minecraft.util.EnumFacing;
-//import net.minecraftforge.common.util.ForgeDirection;
+//import packet.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Reference implementation of both IEMCAcceptor and IEMCProvider

@@ -1,7 +1,7 @@
 package moze_intel.projecte.api.tile;
 
 import net.minecraft.util.EnumFacing;
-//import net.minecraftforge.common.util.ForgeDirection;
+//import packet.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Implement this interface to specify that "EMC can be taken from this Tile Entity from an external source"

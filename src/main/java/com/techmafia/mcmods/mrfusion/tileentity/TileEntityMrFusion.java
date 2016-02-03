@@ -1,7 +1,11 @@
 package com.techmafia.mcmods.mrfusion.tileentity;
 
 import cofh.api.energy.IEnergyStorage;
+import com.techmafia.mcmods.mrfusion.net.CommonPacketHandler;
+import com.techmafia.mcmods.mrfusion.net.messages.DeviceUpdateMessage;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +19,10 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by mengy007 on 1/31/2016.
@@ -22,19 +30,22 @@ import net.minecraft.world.World;
 public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyStorage, IInventory {
     final int NUMBER_OF_SLOTS = 1;
     final String DISPLAY_NAME = "Mr. Fusion";
-    //EntityPlayer playersWatching[] = new EntityPlayer[];
 
     protected int energy;
     protected int capacity;
 
+    private int ticksSinceLastUpdate = 0;
+    private int ticksBetweenUpdates = 3;
     private ItemStack itemStack;
+    private Set<EntityPlayer> playersWatching;
 
     public TileEntityMrFusion() {
-        this(0);
+        this(100000000);
     }
 
     public TileEntityMrFusion(int capacity) {
         this.capacity = capacity;
+        playersWatching = new HashSet<EntityPlayer>();
     }
 
     /* Server sync */
@@ -49,6 +60,54 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
         readFromNBT(pkt.getNbtCompound());
+    }
+
+    public void beginUpdatingPlayer(EntityPlayer player) {
+        playersWatching.add(player);
+        sendUpdatePacketToPlayer(player);
+    }
+
+    public void stopUpdatingPlayer(EntityPlayer player) {
+        playersWatching.remove(player);
+    }
+
+    private void sendUpdatePacketToPlayer(EntityPlayer player) {
+        if (this.worldObj.isRemote) { return; }
+
+        CommonPacketHandler.INSTANCE.sendTo(getUpdatePacket(), (EntityPlayerMP)player);
+    }
+
+    private void sendUpdatePacket() {
+        if (this.worldObj.isRemote) { return; }
+        if (this.playersWatching.size() <= 0) { return; }
+
+        for (EntityPlayer player : playersWatching) {
+            CommonPacketHandler.INSTANCE.sendTo(getUpdatePacket(), (EntityPlayerMP)player);
+        }
+    }
+
+    protected IMessage getUpdatePacket() {
+        NBTTagCompound childData = new NBTTagCompound();
+
+        onSendUpdate(childData);
+
+        return new DeviceUpdateMessage(pos.getX(), pos.getY(), pos.getZ(), childData);
+    }
+
+    /**
+     * Sets information to send
+     * @param nbt
+     */
+    public void onSendUpdate(NBTTagCompound nbt) {
+        nbt.setInteger("Energy", this.energy);
+    }
+
+    /**
+     * Called on received update packet from server
+     * @param nbt
+     */
+    public void onReceiveUpdate(NBTTagCompound nbt) {
+        this.energy = nbt.getInteger("Energy");
     }
 
     @Override
@@ -98,11 +157,36 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
     public void update() {
         if (!this.hasWorldObj()) return;
         World world = this.getWorld();
-        if (world.isRemote) return; // Don't do anything on client side
+        if (world.isRemote) {
+            return; // Don't do anything on client side
+        }
 
-        this.receiveEnergy(1, false);
+        ItemStack itemStack = getStackInSlot(0);
 
-        this.markDirty();
+        if (itemStack != null && itemStack.stackSize > 0) {
+            int rfPerItem = 1;
+
+            int energyToAdd = (rfPerItem * itemStack.stackSize);
+
+            int energyAdded = this.receiveEnergy(energyToAdd, false);
+
+            if (energyAdded > 0) {
+                int itemsEaten = energyAdded / rfPerItem;
+
+                decrStackSize(0, itemsEaten);
+            }
+        } else {
+            //System.out.println("Something is wrong.");
+        }
+
+        // Send update to players watching
+        if (this.playersWatching.size() > 0) {
+            ticksSinceLastUpdate++;
+            if (ticksSinceLastUpdate >= ticksBetweenUpdates) {
+                sendUpdatePacket();
+                ticksSinceLastUpdate = 0;
+            }
+        }
     }
 
     /* IWorldNameable */

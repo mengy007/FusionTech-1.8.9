@@ -50,6 +50,9 @@ public class ContainerMrFusion extends Container {
 
         // Add inventory slot
         addSlotToContainer(new Slot(tileEntityMrFusion, 0, 8+(4*SLOT_X_SPACING), 20));
+
+        // Add player to get tile updates
+        tileEntityMrFusion.beginUpdatingPlayer(inventoryPlayer.player);
     }
 
     // Vanilla calls this method every tick to make sure the player is still able to access the inventory, and if not closes the gui
@@ -109,5 +112,8 @@ public class ContainerMrFusion extends Container {
     {
         super.onContainerClosed(playerIn);
         this.tileEntityMrFusion.closeInventory(playerIn);
+
+        // Stop sending tile updates to player
+        this.tileEntityMrFusion.stopUpdatingPlayer(playerIn);
     }
 }
