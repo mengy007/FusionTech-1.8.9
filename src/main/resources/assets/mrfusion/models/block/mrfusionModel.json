@@ -1,7 +1,7 @@
 {
   "parent": "block/cube",
   "textures": {
-    "down": "mrfusion:blocks/mrfusion_side",
+    "down": "mrfusion:blocks/mrfusion_bottom",
     "up": "mrfusion:blocks/mrfusion_top",
     "north": "mrfusion:blocks/mrfusion_side",
     "east": "mrfusion:blocks/mrfusion_side",

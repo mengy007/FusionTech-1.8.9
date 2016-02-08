@@ -20,7 +20,7 @@ public class ContainerMrFusion extends Container {
 
     private final int VANILLA_FIRST_SLOT_INDEX = 0;
     private final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-    private final int TE_INVENTORY_SLOT_COUNT = 9;
+    private final int TE_INVENTORY_SLOT_COUNT = 1;
 
     public ContainerMrFusion(InventoryPlayer inventoryPlayer, TileEntityMrFusion tileEntityMrFusion) {
         this.tileEntityMrFusion = tileEntityMrFusion;

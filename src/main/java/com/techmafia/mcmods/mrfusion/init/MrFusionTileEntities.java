@@ -10,7 +10,7 @@ public class MrFusionTileEntities {
     public static TileEntityMrFusion tileEntityMrFusion;
 
     public static void init() {
-        tileEntityMrFusion = new TileEntityMrFusion(100000000);
+        tileEntityMrFusion = new TileEntityMrFusion();
         GameRegistry.registerTileEntity(TileEntityMrFusion.class, "mrfusion_te");
     }
 }

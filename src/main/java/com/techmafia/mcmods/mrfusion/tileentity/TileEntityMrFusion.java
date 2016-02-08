@@ -2,10 +2,12 @@ package com.techmafia.mcmods.mrfusion.tileentity;
 
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 import com.techmafia.mcmods.mrfusion.net.CommonPacketHandler;
 import com.techmafia.mcmods.mrfusion.net.messages.DeviceUpdateMessage;
+import com.techmafia.mcmods.mrfusion.reference.Reference;
 import moze_intel.projecte.api.ProjectEAPI;
-import moze_intel.projecte.api.item.IItemEmc;
+import moze_intel.projecte.api.tile.IEmcAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -26,11 +28,11 @@ import java.util.Set;
 /**
  * Created by mengy007 on 1/31/2016.
  */
-public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyHandler, IInventory {
+public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyHandler, IEmcAcceptor, IInventory {
     final int NUMBER_OF_SLOTS = 1;
     final String DISPLAY_NAME = "Mr. Fusion";
 
-    protected EnergyStorage energyStorage = new EnergyStorage(1000000);
+    protected EnergyStorage energyStorage = new EnergyStorage(Reference.MRFUSION_CAPACITY);
 
     private int ticksSinceLastUpdate = 0;
     private int ticksBetweenUpdates = 3;
@@ -38,11 +40,6 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
     private Set<EntityPlayer> playersWatching;
 
     public TileEntityMrFusion() {
-        playersWatching = new HashSet<EntityPlayer>();
-    }
-
-    public TileEntityMrFusion(int capacity) {
-        this.energyStorage = new EnergyStorage(capacity);
         playersWatching = new HashSet<EntityPlayer>();
     }
 
@@ -177,7 +174,19 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
                     if (ProjectEAPI.getEMCProxy().hasValue(removedItemStack)) {
                         rfPerItem = ProjectEAPI.getEMCProxy().getValue(removedItemStack);
                     }
-                    this.receiveEnergy(null, rfPerItem, false);
+                    this.itemIntoEnergy(rfPerItem, false);
+                }
+            }
+        }
+
+        // Distribute power
+        if (isActive()) {
+            for (EnumFacing direction : EnumFacing.VALUES) {
+                TileEntity adjacentTile = worldObj.getTileEntity(new BlockPos(pos.getX() + direction.getFrontOffsetX(), pos.getY() + direction.getFrontOffsetY(), pos.getZ() + direction.getFrontOffsetZ()));
+
+                if (adjacentTile instanceof IEnergyReceiver) {
+                    IEnergyReceiver handler = (IEnergyReceiver) adjacentTile;
+                    energyStorage.extractEnergy(handler.receiveEnergy(direction.getOpposite(), energyStorage.extractEnergy(energyStorage.getMaxExtract(), true), false), false);
                 }
             }
         }
@@ -190,6 +199,10 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
                 ticksSinceLastUpdate = 0;
             }
         }
+    }
+
+    public boolean isActive() {
+        return true;
     }
 
     /* IWorldNameable */
@@ -317,7 +330,8 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
     /* IEnergyHandler */
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        return energyStorage.receiveEnergy(maxReceive, simulate);
+        return 0; // Only receive energy from internal method
+        //return energyStorage.receiveEnergy(maxReceive, simulate);
     }
 
     @Override
@@ -340,4 +354,44 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
         return true;
     }
 
+    /**
+     * Used to over write energy level "on block placed"
+     * @param newEnergy
+     */
+    public void setEnergy(int newEnergy) {
+        this.energyStorage.modifyEnergyStored(newEnergy);
+    }
+
+    public int itemIntoEnergy(int energy, boolean simulate) {
+        return energyStorage.receiveEnergy(energy, simulate);
+    }
+
+    /**
+     * IEMCAcceptor
+     */
+    @Override
+    public double acceptEMC(EnumFacing side, double toAccept) {
+        return (double)this.energyStorage.receiveEnergy((int)toAccept, false);
+    }
+
+    /**
+     * IEMCStorage
+     */
+    /**
+     * Gets the current amount of EMC in this IEMCStorage
+     * @return The current EMC stored
+     */
+    @Override
+    public double getStoredEmc() {
+        return (double)this.energyStorage.getEnergyStored();
+    }
+
+    /**
+     * Gets the maximum amount of EMC this IEMCStorage is allowed to contain
+     * @return The maximum EMC allowed
+     */
+    @Override
+    public double getMaximumEmc() {
+        return (double)this.energyStorage.getMaxEnergyStored();
+    }
 }

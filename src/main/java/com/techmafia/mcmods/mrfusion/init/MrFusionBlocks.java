@@ -1,9 +1,11 @@
 package com.techmafia.mcmods.mrfusion.init;
 
 import com.techmafia.mcmods.mrfusion.block.BlockMrFusion;
+import com.techmafia.mcmods.mrfusion.block.itemblock.ItemBlockMrFusion;
 import com.techmafia.mcmods.mrfusion.creativetab.CreativeTabMrFusion;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -18,7 +20,7 @@ public class MrFusionBlocks {
         blockMrFusion.setUnlocalizedName("mrfusion");
 
         /* Register Blocks */
-        GameRegistry.registerBlock(blockMrFusion, "mrfusion");
+        GameRegistry.registerBlock(blockMrFusion, ItemBlockMrFusion.class, "mrfusion");
 
         /* Crafting recipes */
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(blockMrFusion, 1), new Object[]{
@@ -26,7 +28,7 @@ public class MrFusionBlocks {
                 "ISI",
                 "DOD",
                 'S', Items.nether_star,
-                'D', Items.diamond,
+                'D', Blocks.diamond_block,
                 'O', Blocks.obsidian,
                 'I', Blocks.iron_block
         }));
