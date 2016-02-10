@@ -7,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -32,5 +33,8 @@ public class MrFusionBlocks {
                 'O', Blocks.obsidian,
                 'I', Blocks.iron_block
         }));
+
+        /* Waila */
+        FMLInterModComms.sendMessage("Waila", "register", "com.techmafia.mcmods.mrfusion.block.handler.WailaTileHandler.callbackRegister");
     }
 }

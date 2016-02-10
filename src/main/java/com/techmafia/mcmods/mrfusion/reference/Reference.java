@@ -6,7 +6,7 @@ package com.techmafia.mcmods.mrfusion.reference;
 public class Reference {
     public static final String MOD_ID = "mrfusion";
     public static final String MOD_NAME = "mrfusion";
-    public static final String VERSION = "0.1.002";
+    public static final String VERSION = "0.1.003";
     public static final String CHANNEL = "mengy007_mrfusion";
     public static final String CLIENT_PROXY_CLASS   = "com.techmafia.mcmods.mrfusion.proxy.ClientProxy";
     public static final String SERVER_PROXY_CLASS   = "com.techmafia.mcmods.mrfusion.proxy.ServerProxy";

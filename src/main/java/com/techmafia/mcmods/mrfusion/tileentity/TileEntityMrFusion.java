@@ -6,8 +6,12 @@ import cofh.api.energy.IEnergyReceiver;
 import com.techmafia.mcmods.mrfusion.net.CommonPacketHandler;
 import com.techmafia.mcmods.mrfusion.net.messages.DeviceUpdateMessage;
 import com.techmafia.mcmods.mrfusion.reference.Reference;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaEntityAccessor;
+import mcp.mobius.waila.api.IWailaEntityProvider;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.tile.IEmcAcceptor;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -23,6 +27,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -394,4 +399,43 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
     public double getMaximumEmc() {
         return (double)this.energyStorage.getMaxEnergyStored();
     }
+
+    /**
+     * IWailaEntityProvider
+     */
+    /*
+    @Override
+    public Entity getWailaOverride(IWailaEntityAccessor iWailaEntityAccessor, IWailaConfigHandler iWailaConfigHandler) {
+        return null;
+    }
+
+    @Override
+    public List<String> getWailaHead(Entity entity, List<String> list, IWailaEntityAccessor iWailaEntityAccessor, IWailaConfigHandler iWailaConfigHandler) {
+        return null;
+    }
+
+    @Override
+    public List<String> getWailaBody(Entity entity, List<String> list, IWailaEntityAccessor iWailaEntityAccessor, IWailaConfigHandler iWailaConfigHandler) {
+        String color = "";
+
+        if (energyStorage.getEnergyStored() > 0) {
+            color = EnumChatFormatting.GREEN.toString();
+        } else {
+            color = EnumChatFormatting.RED.toString();
+        }
+        list.add(color + energyStorage.getEnergyStored() + "/" + energyStorage.getMaxEnergyStored() + " RF");
+
+        return list;
+    }
+
+    @Override
+    public List<String> getWailaTail(Entity entity, List<String> list, IWailaEntityAccessor iWailaEntityAccessor, IWailaConfigHandler iWailaConfigHandler) {
+        return null;
+    }
+
+    @Override
+    public NBTTagCompound getNBTData(EntityPlayerMP entityPlayerMP, Entity entity, NBTTagCompound nbtTagCompound, World world) {
+        return null;
+    }
+    */
 }
