@@ -3,7 +3,7 @@
         "modid": "mrfusion",
         "name": "Mr Fusion",
         "description": "RF from EMC and junk",
-        "version": "0.1.001",
+        "version": "0.1.003",
         "mcversion": "${mcversion}",
         "url": "",
         "updateUrl": "",

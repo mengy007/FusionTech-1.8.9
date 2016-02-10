@@ -1,17 +1,11 @@
 package com.techmafia.mcmods.mrfusion.tileentity;
 
-import cofh.api.energy.EnergyStorage;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyReceiver;
+import cofh.api.energy.*;
 import com.techmafia.mcmods.mrfusion.net.CommonPacketHandler;
 import com.techmafia.mcmods.mrfusion.net.messages.DeviceUpdateMessage;
 import com.techmafia.mcmods.mrfusion.reference.Reference;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaEntityAccessor;
-import mcp.mobius.waila.api.IWailaEntityProvider;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.tile.IEmcAcceptor;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -33,7 +27,7 @@ import java.util.Set;
 /**
  * Created by mengy007 on 1/31/2016.
  */
-public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyHandler, IEmcAcceptor, IInventory {
+public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergyHandler, IEnergyReceiver, IEnergyProvider, IEmcAcceptor, IInventory {
     final int NUMBER_OF_SLOTS = 1;
     final String DISPLAY_NAME = "Mr. Fusion";
 
