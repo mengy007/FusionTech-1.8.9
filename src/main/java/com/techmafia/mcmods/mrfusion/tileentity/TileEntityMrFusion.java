@@ -196,6 +196,22 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
             }
         }
 
+        // Checks for players near tile
+        double range = 6.0d;
+        List l = worldObj.getEntitiesWithinAABB(EntityPlayer.class, AxisAlignedBB.fromBounds(pos.getX()-range, pos.getY()-range, pos.getZ()-range, pos.getX()+range, pos.getY()+range, pos.getZ()+range));
+
+        for (int i=0; i<l.size(); i++) {
+            EntityPlayerMP player = (EntityPlayerMP)l.get(i);
+            beginUpdatingPlayer(player);
+        }
+
+        // Removes players out of range
+        for (EntityPlayer player : playersWatching) {
+            if (player.getDistance(pos.getX(), pos.getY(), pos.getZ()) > range) {
+                stopUpdatingPlayer(player);
+            }
+        }
+
         // Send update to players watching
         if (this.playersWatching.size() > 0) {
             ticksSinceLastUpdate++;
@@ -399,43 +415,4 @@ public class TileEntityMrFusion extends TileEntity implements ITickable, IEnergy
     public double getMaximumEmc() {
         return (double)this.energyStorage.getMaxEnergyStored();
     }
-
-    /**
-     * IWailaEntityProvider
-     */
-    /*
-    @Override
-    public Entity getWailaOverride(IWailaEntityAccessor iWailaEntityAccessor, IWailaConfigHandler iWailaConfigHandler) {
-        return null;
-    }
-
-    @Override
-    public List<String> getWailaHead(Entity entity, List<String> list, IWailaEntityAccessor iWailaEntityAccessor, IWailaConfigHandler iWailaConfigHandler) {
-        return null;
-    }
-
-    @Override
-    public List<String> getWailaBody(Entity entity, List<String> list, IWailaEntityAccessor iWailaEntityAccessor, IWailaConfigHandler iWailaConfigHandler) {
-        String color = "";
-
-        if (energyStorage.getEnergyStored() > 0) {
-            color = EnumChatFormatting.GREEN.toString();
-        } else {
-            color = EnumChatFormatting.RED.toString();
-        }
-        list.add(color + energyStorage.getEnergyStored() + "/" + energyStorage.getMaxEnergyStored() + " RF");
-
-        return list;
-    }
-
-    @Override
-    public List<String> getWailaTail(Entity entity, List<String> list, IWailaEntityAccessor iWailaEntityAccessor, IWailaConfigHandler iWailaConfigHandler) {
-        return null;
-    }
-
-    @Override
-    public NBTTagCompound getNBTData(EntityPlayerMP entityPlayerMP, Entity entity, NBTTagCompound nbtTagCompound, World world) {
-        return null;
-    }
-    */
 }

@@ -50,7 +50,7 @@ public class WailaTileHandler implements IWailaDataProvider {
             TileEntityMrFusion tile = (TileEntityMrFusion)te;
 
             if (tile.getEnergyStored(null) > 0) {
-                color = EnumChatFormatting.GREEN.toString();
+                color = EnumChatFormatting.DARK_GREEN.toString();
             } else {
                 color = EnumChatFormatting.DARK_RED.toString();
             }
