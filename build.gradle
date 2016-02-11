@@ -22,7 +22,7 @@ plugins {
 */
 version = "0.1.003"
 group= "com.techmafia.mcmods" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "mrfusion"
+archivesBaseName = "fusiontech"
 
 minecraft {
     version = "1.8.9-11.15.0.1710"
