@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "fusiontech:blocks/mrfusion_bottom",
+    "up": "fusiontech:blocks/mrfusion_top",
+    "north": "fusiontech:blocks/mrfusion_side",
+    "east": "fusiontech:blocks/mrfusion_side",
+    "south": "fusiontech:blocks/mrfusion_side",
+    "west": "fusiontech:blocks/mrfusion_side",
+    "particle": "fusiontech:blocks/mrfusion_side"
+  }
+}

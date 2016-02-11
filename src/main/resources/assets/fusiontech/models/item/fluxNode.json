@@ -1,5 +1,5 @@
 {
-  "parent": "mrfusion:block/mrfusionModel",
+  "parent": "fusiontech:block/fluxNodeModel",
   "display": {
     "thirdperson": {
       "rotation": [ 10, -45, 170 ],

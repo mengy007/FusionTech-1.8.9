@@ -18,7 +18,7 @@ public class CreativeTabMrFusion {
 
         @Override
         public String getTranslatedTabLabel() {
-            return "Fusion Tech";
+            return "FusionTech";
         }
     };
 }

@@ -33,6 +33,6 @@ public class ClientProxy extends CommonProxy {
         /**
          * Blocks
          */
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(GameRegistry.findItem(Reference.MOD_ID, "fusiontech"), DEFAULT_ITEM_SUBTYPE, new ModelResourceLocation("fusiontech:fusiontech", "inventory"));
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(GameRegistry.findItem(Reference.MOD_ID, "fusiontech"), DEFAULT_ITEM_SUBTYPE, new ModelResourceLocation("fusiontech:fluxNode", "inventory"));
     }
 }
