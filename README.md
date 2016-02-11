@@ -1,3 +1,3 @@
-# MrFusion-1.8.9
+# FusionTech-1.8.9
 
-Got RF?
+Companion mod to Mr. Fusion
