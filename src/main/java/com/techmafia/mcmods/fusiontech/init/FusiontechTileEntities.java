@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 /**
  * Created by mengy007 on 1/31/2016.
  */
-public class MrFusionTileEntities {
+public class FusiontechTileEntities {
     public static TileEntityFluxNode tileEntityFluxNode;
 
     public static void init() {

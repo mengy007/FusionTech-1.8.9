@@ -1,6 +1,6 @@
 package com.techmafia.mcmods.fusiontech.creativetab;
 
-import com.techmafia.mcmods.fusiontech.init.MrFusionBlocks;
+import com.techmafia.mcmods.fusiontech.init.FusiontechBlocks;
 import com.techmafia.mcmods.fusiontech.reference.Reference;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -13,7 +13,7 @@ public class CreativeTabMrFusion {
     public static final CreativeTabs FUSIONTECH_TAB = new CreativeTabs(Reference.MOD_ID) {
         @Override
         public Item getTabIconItem() {
-            return new ItemStack(MrFusionBlocks.blockFluxNode).getItem();
+            return new ItemStack(FusiontechBlocks.blockFluxNode).getItem();
         }
 
         @Override

@@ -1,9 +1,9 @@
 package com.techmafia.mcmods.fusiontech.proxy;
 
-import com.techmafia.mcmods.fusiontech.init.MrFusionGui;
-import com.techmafia.mcmods.fusiontech.init.MrFusionTileEntities;
-import com.techmafia.mcmods.fusiontech.init.MrFusionBlocks;
-import com.techmafia.mcmods.fusiontech.init.MrFusionItems;
+import com.techmafia.mcmods.fusiontech.init.FusiontechGui;
+import com.techmafia.mcmods.fusiontech.init.FusiontechTileEntities;
+import com.techmafia.mcmods.fusiontech.init.FusiontechBlocks;
+import com.techmafia.mcmods.fusiontech.init.FusiontechItems;
 import com.techmafia.mcmods.fusiontech.net.CommonPacketHandler;
 
 /**
@@ -15,16 +15,16 @@ public class CommonProxy {
         CommonPacketHandler.init();
 
         /* Items */
-        MrFusionItems.init();
+        FusiontechItems.init();
 
         /* Blocks */
-        MrFusionBlocks.init();
+        FusiontechBlocks.init();
 
         /* Tile Entities */
-        MrFusionTileEntities.init();
+        FusiontechTileEntities.init();
 
         /* GUI */
-        MrFusionGui.init();
+        FusiontechGui.init();
     }
 
     public void registerClientStuff() {}
